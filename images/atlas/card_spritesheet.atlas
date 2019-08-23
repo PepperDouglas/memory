@@ -1,0 +1,76 @@
+
+card_spritesheet.png
+size: 512,512
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+back_00000
+  rotate: false
+  xy: 254, 5
+  size: 152, 152
+  orig: 152, 152
+  offset: 0, 0
+  index: -1
+back_00001
+  rotate: false
+  xy: 254, 163
+  size: 151, 158
+  orig: 151, 158
+  offset: 0, 0
+  index: -1
+back_00002
+  rotate: false
+  xy: 316, 327
+  size: 145, 166
+  orig: 145, 166
+  offset: 0, 0
+  index: -1
+back_00003
+  rotate: false
+  xy: 176, 327
+  size: 134, 172
+  orig: 134, 172
+  offset: 0, 0
+  index: -1
+back_00004
+  rotate: false
+  xy: 128, 5
+  size: 120, 178
+  orig: 120, 178
+  offset: 0, 0
+  index: -1
+back_00005
+  rotate: false
+  xy: 68, 199
+  size: 102, 182
+  orig: 102, 182
+  offset: 0, 0
+  index: -1
+back_00006
+  rotate: false
+  xy: 41, 5
+  size: 81, 188
+  orig: 81, 188
+  offset: 0, 0
+  index: -1
+back_00007
+  rotate: false
+  xy: 5, 205
+  size: 57, 192
+  orig: 57, 192
+  offset: 0, 0
+  index: -1
+back_00008
+  rotate: false
+  xy: 5, 5
+  size: 30, 194
+  orig: 30, 194
+  offset: 0, 0
+  index: -1
+back_00009
+  rotate: false
+  xy: 5, 403
+  size: 3, 3
+  orig: 3, 3
+  offset: 0, 0
+  index: -1

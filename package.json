@@ -1,0 +1,19 @@
+{
+  "name": "memory",
+  "version": "1.0.0",
+  "description": "memory",
+  "main": "script.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PepperDouglas/memory.git"
+  },
+  "author": "douglas sebom",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/PepperDouglas/memory/issues"
+  },
+  "homepage": "https://github.com/PepperDouglas/memory#readme"
+}
