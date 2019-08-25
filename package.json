@@ -15,5 +15,12 @@
   "bugs": {
     "url": "https://github.com/PepperDouglas/memory/issues"
   },
-  "homepage": "https://github.com/PepperDouglas/memory#readme"
+  "homepage": "https://github.com/PepperDouglas/memory#readme",
+  "devDependencies": {
+    "webpack": "^4.39.2",
+    "webpack-cli": "^3.3.7"
+  },
+  "dependencies": {
+    "pixi.js": "^5.1.2"
+  }
 }
