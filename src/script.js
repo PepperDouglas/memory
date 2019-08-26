@@ -24,6 +24,10 @@ let Application = PIXI.Application,
         //load a JSON file and run the `setup` function when it's done
         loader
         .add("./images/atlas/card_spritesheet2.json")
+        .add("./images/1.png").add("./images/2.png").add("./images/3.png")
+        .add("./images/4.png").add("./images/5.png").add("./images/6.png")
+        .add("./images/7.png").add("./images/8.png").add("./images/9.png")
+        .add("./images/10.png")
         .on("progress", loadHandler)
         .load(setup);
 
@@ -38,8 +42,68 @@ let Application = PIXI.Application,
             //document.addEventListener('click', renderStage);
         }
 
-        //FUNCTION to get images
-        //AND get them into a random order
+        //regex loop the below arr from fn() to shorten it
+        //^No, implmented in imgFileName
+        let cardSelection = [
+            "./images/1.png", "./images/2.png", "./images/3.png",
+            "./images/4.png","./images/5.png","./images/6.png",
+            "./images/7.png","./images/8.png","./images/9.png",
+            "./images/10.png"];
+
+        //selected cards below
+        let cardsSelected = [];
+        //check selected cards
+        function checkWin(arr){
+            let firstCard = imgFileName(arr[0]);
+            let secondCard = imgFileName(arr[1]);
+            if (firstCard === secondCard){
+                return true;
+            } else {
+                return false;
+            }
+            //return firstCard === secondCard ? true : false;
+        }
+        
+        function duplicateArr(arr){
+            let duparr = [];
+            for(let i = 0; i < arr.length; i++){
+                duparr.push(arr[i]);
+                duparr.push(arr[i]);
+            }
+            return duparr;
+        }
+        
+        function imgFileName(fileLocation){
+            let regex = /(images\/\w+)/;
+            let fileName = fileLocation[0].match(regex)[0].split('/')[1];
+            console.log(`Img name is ${fileName}`);
+            return fileName;
+        }
+
+        function mixArray(arr){
+            for(let i = 0; i < arr.length; i++){
+                let jumps = Math.ceil(Math.random() * 6);
+                let temp = arr[i];
+                let trade = loopArray(jumps, i, arr);
+                arr[i] = arr[trade];
+                arr[trade] = temp;
+            }
+            return arr;
+        }
+
+        function loopArray(jumps, startPos, arr){
+            let i = startPos;
+            for (let j = 0; j < jumps; j++){
+                i += 1;
+                if (i === arr.length){
+                    i = 0;
+                }
+            }
+            return i;
+        }
+
+        let mixedArray = mixArray(duplicateArr(cardSelection));
+        console.log(mixArray(duplicateArr(cardSelection)));
 
         /*function renderStage(){
             console.log(app.stage.children.length);
@@ -89,8 +153,8 @@ let Application = PIXI.Application,
         console.log(location.x, location.y);
         while (i < 9){
             let next = new Sprite(id[i + 1]);
-            next.width = 100;
-            next.height = 100;
+            next.width = 76;
+            next.height = 76;
             let promise = new Promise(function(resolve, reject){
                     location.addChild(next);
                     console.log(i);
@@ -102,19 +166,39 @@ let Application = PIXI.Application,
             await promise;
             i++;
         }
-        /*setInterval(function(){
-            let next = new Sprite(id[i + 1])
-            app.stage.children[location]
-        }, 500);*/
+        let cardSymbol = new Sprite(resources[mixedArray[location.num]].texture);
+        cardSymbol.width = 76;
+        cardSymbol.height = 76;
+        cardsSelected.push([mixedArray[location.num], location.num]); //now we can get the container
+        location.addChild(cardSymbol);
+        /*if (cardsSelected.length === 2){
+            if(checkWin(cardsSelected)){
+                return true;
+                /*location.removeChild(cardSymbol);
+                cardsSelected = [];
+            } else {
+                return false;
+                /*
+                console.log(cardsSelected[0][1], cardsSelected[1][1]);
+                console.log(location);
+                location.parent.children[cardsSelected[1][1]].children[0].visible = true;
+                location.removeChild(cardSymbol);
+                location.children[0].visible = true;
+                location.interactive = true;
+                cardsSelected = [];
+            }
+        }*/
+        return true;
     }
 
     function createBoard(){
+        let mainContainer = [];
         const slots = 20;
         for (let i = 0; i < slots; i++){
             let back = new Container;
             let cont = new Sprite(id[0]);
-            cont.height = 100;
-            cont.width = 100;
+            cont.height = 76;
+            cont.width = 76;
             back.num = i;
             if (i > 4 && i < 10){
                 back.y = 100;
@@ -136,12 +220,33 @@ let Application = PIXI.Application,
                 back.x = i * 64 + 4;
             }
             back.interactive = true;
-            back.click = function(){
-                back.removeChild(cont);
+            back.click = async function(){
+                //back.removeChild(cont);
+                back.interactive = false;
+                back.children[0].visible = false;
                 console.log(arr[back.num]);
-                flipAnim(back)
+                let won = flipAnim(back);
+                await won;
+                if (won){
+                    console.log('flipped');
+                    if (cardsSelected.length === 2){
+                        if(checkWin(cardsSelected)){
+                            //location.removeChild(cardSymbol);
+                            console.log('won');
+                            cardsSelected = [];
+                        } else {
+                            console.log(cardsSelected[0][1], cardsSelected[1][1]);
+                            console.log('missed');
+                            //location.removeChild(cardSymbol);
+                            //location.children[0].visible = true;
+                            //location.interactive = true;
+                            cardsSelected = [];
+                        }
+                    }
+                }
             }
             back.addChild(cont);
+            mainContainer.push(back);
             app.stage.addChild(back);
         }
     }
