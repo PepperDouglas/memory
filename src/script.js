@@ -10,8 +10,8 @@ let Application = PIXI.Application,
         
         //Create a Pixi Application
         let app = new Application({ 
-            width: 512, 
-            height: 512,                       
+            width: 1024, 
+            height: 720,                       
             antialias: true, 
             transparent: false, 
             resolution: 1
@@ -105,56 +105,13 @@ let Application = PIXI.Application,
         let mixedArray = mixArray(duplicateArr(cardSelection));
         console.log(mixArray(duplicateArr(cardSelection)));
 
-        /*function renderStage(){
-            console.log(app.stage.children.length);
-            setTimeout(createBoard, 1000);
-            if (app.stage.children.length > 0){
-                for (let i = 0; i < app.stage.children.length; i++){
-                    
-                    app.stage.removeChild(app.stage.children[0]);
-                    console.log('yes');
-                }
-            }
-            console.log(`You have won ${determineWin()} times!`);
-        }*/
-
-        /*function determineWin(){
-            const figures = app.stage.children;
-            let wins = 0;
-            for (let i = 0; i < 3; i++){
-                let arr1 = figures.slice(i*4, i*4+4);
-                if (arr1[0]._texture.textureCacheIds[0] === arr1[1]._texture.textureCacheIds[0]
-                && arr1[1]._texture.textureCacheIds[0] === arr1[2]._texture.textureCacheIds[0]
-                && arr1[2]._texture.textureCacheIds[0] === arr1[3]._texture.textureCacheIds[0]){
-                    wins += 1;
-                }
-            }
-            return wins;
-        }*/
-
-        
-        /*function animalRoll(){
-        let numberOfAnimals = 3;
-            const animalInt = getRandomInt(numberOfAnimals)
-            function getRandomInt(max) {
-                 return Math.floor(Math.random() * Math.floor(max));
-            }
-            switch(animalInt){
-                case 0: return "cat.png";
-                case 1: return "hedgehog.png";
-                case 2: return "tiger.png";
-            }
-
-        }*/
-    let arr = ['0', '1', '2', '3'];
 
     async function flipAnim(location){
         let i = 0;
-        console.log(location.x, location.y);
         while (i < 9){
             let next = new Sprite(id[i + 1]);
-            next.width = 76;
-            next.height = 76;
+            next.width = 140;
+            next.height = 140;
             let promise = new Promise(function(resolve, reject){
                     location.addChild(next);
                     console.log(i);
@@ -166,87 +123,92 @@ let Application = PIXI.Application,
             await promise;
             i++;
         }
-        let cardSymbol = new Sprite(resources[mixedArray[location.num]].texture);
-        cardSymbol.width = 76;
-        cardSymbol.height = 76;
-        cardsSelected.push([mixedArray[location.num], location.num]); //now we can get the container
-        location.addChild(cardSymbol);
-        /*if (cardsSelected.length === 2){
-            if(checkWin(cardsSelected)){
-                return true;
-                /*location.removeChild(cardSymbol);
-                cardsSelected = [];
-            } else {
-                return false;
-                /*
-                console.log(cardsSelected[0][1], cardsSelected[1][1]);
-                console.log(location);
-                location.parent.children[cardsSelected[1][1]].children[0].visible = true;
-                location.removeChild(cardSymbol);
-                location.children[0].visible = true;
-                location.interactive = true;
-                cardsSelected = [];
-            }
-        }*/
-        return true;
+        return;
     }
 
+    let matchedCards = ['filler'];
+
     function createBoard(){
-        let mainContainer = [];
         const slots = 20;
         for (let i = 0; i < slots; i++){
             let back = new Container;
             let cont = new Sprite(id[0]);
-            cont.height = 76;
-            cont.width = 76;
+            cont.height = 140;
+            cont.width = 140;
             back.num = i;
             if (i > 4 && i < 10){
-                back.y = 100;
+                back.y = 140;
                 i -= 5;
-                back.x = i * 64 + 4;
+                back.x = i * 140 + 4;
                 i += 5;
             } else if (i > 9 && i < 15){
-                back.y = 180;
+                back.y = 240;
                 i -= 10;
-                back.x = i * 64 + 4;
+                back.x = i * 140 + 4;
                 i += 10;
             } else if (i > 14){
-                back.y = 260;
+                back.y = 340;
                 i -= 15;
-                back.x = i * 64 + 4;
+                back.x = i * 140 + 4;
                 i += 15;
             } else { 
-                back.y = 20;
-                back.x = i * 64 + 4;
+                back.y = 40;
+                back.x = i * 140 + 4;
             }
             back.interactive = true;
             back.click = async function(){
-                //back.removeChild(cont);
+                if(cardsSelected.length >= 1){
+                    back.parent.children.forEach(e => {
+                        e.interactive = false;
+                    });
+                }
+                cardsSelected.push([mixedArray[back.num], back.num]); //now we can get the container
                 back.interactive = false;
                 back.children[0].visible = false;
-                console.log(arr[back.num]);
                 let won = flipAnim(back);
                 await won;
-                if (won){
-                    console.log('flipped');
-                    if (cardsSelected.length === 2){
-                        if(checkWin(cardsSelected)){
-                            //location.removeChild(cardSymbol);
-                            console.log('won');
-                            cardsSelected = [];
-                        } else {
-                            console.log(cardsSelected[0][1], cardsSelected[1][1]);
-                            console.log('missed');
-                            //location.removeChild(cardSymbol);
-                            //location.children[0].visible = true;
-                            //location.interactive = true;
-                            cardsSelected = [];
+                if(back.children.length < 2){
+                    let cardSymbol = new Sprite(resources[mixedArray[back.num]].texture);
+                    cardSymbol.width = 85;
+                    cardSymbol.height = 85;
+                    cardSymbol.x += 28;
+                    cardSymbol.y += 28;
+                    back.addChild(cardSymbol);
+                } else {
+                    back.children[1].visible = true;
+                }
+                if (cardsSelected.length === 2){
+                    if(checkWin(cardsSelected)){
+                        matchedCards.push(cardsSelected[0][1], cardsSelected[1][1]);
+                        back.parent.children.forEach(e => {
+                            e.interactive = true;
+                        })
+                        for (let j = 0; j < matchedCards.length; j++){
+                            if (back.parent.children[matchedCards[j]]){
+                                back.parent.children[matchedCards[j]].interactive = false;
+                            }
                         }
+                        cardsSelected = [];
+                    } else {
+                        setTimeout(function(){
+                            back.parent.children[cardsSelected[0][1]].children[1].visible = false;
+                            back.parent.children[cardsSelected[1][1]].children[1].visible = false;
+                            back.parent.children[cardsSelected[0][1]].children[0].visible = true;
+                            back.parent.children[cardsSelected[1][1]].children[0].visible = true;
+                            back.parent.children.forEach(e => {
+                                e.interactive = true;
+                            })
+                            for (let j = 0; j < matchedCards.length; j++){
+                                if (back.parent.children[matchedCards[j]]){
+                                    back.parent.children[matchedCards[j]].interactive = false;
+                                }
+                            }
+                            cardsSelected = [];
+                        }, 1800);
                     }
                 }
             }
             back.addChild(cont);
-            mainContainer.push(back);
             app.stage.addChild(back);
         }
     }
