@@ -118,7 +118,7 @@ let Application = PIXI.Application,
                     setTimeout(function(){
                         location.removeChild(next);
                         resolve();
-                    }, 100);
+                    }, 20);
             });
             await promise;
             i++;
@@ -187,6 +187,42 @@ let Application = PIXI.Application,
                             if (back.parent.children[matchedCards[j]]){
                                 back.parent.children[matchedCards[j]].interactive = false;
                             }
+                            //extract
+                            for (let b = 1; b < 3; b++){
+                                let j = matchedCards.length - b;
+                                async function moveToPile(){
+                                    function getDestination(){
+                                        let divisor = Math.floor(matchedCards.length / 12);
+                                        return [750 + divisor * 100, 20 + matchedCards.length * 44 - 500 * divisor];
+                                    }
+                                    let destination = getDestination();
+                                    console.log(destination)
+                                    //let i = 0;
+                                    while (back.parent.children[matchedCards[j]].x !== destination[0]
+                                        || back.parent.children[matchedCards[j]].y !== destination[1]){
+                                        let promise = new Promise(function(resolve, reject){
+                                            setTimeout(function(){
+                                                if (back.parent.children[matchedCards[j]].x < destination[0]){
+                                                    back.parent.children[matchedCards[j]].x += 1;
+                                                }
+                                                if (back.parent.children[matchedCards[j]].y > destination[1]){
+                                                    back.parent.children[matchedCards[j]].y -= 1;
+                                                }
+                                                if (back.parent.children[matchedCards[j]].y < destination[1]){
+                                                    back.parent.children[matchedCards[j]].y += 1;
+                                                } 
+                                                resolve();
+                                            }, 20);
+                                            
+                                        });
+                                        await promise;
+                                        //i++;
+                                    }
+                                };
+                                moveToPile();
+                                //extract above
+
+                            }
                         }
                         cardsSelected = [];
                     } else {
@@ -204,7 +240,7 @@ let Application = PIXI.Application,
                                 }
                             }
                             cardsSelected = [];
-                        }, 1800);
+                        }, 500);
                     }
                 }
             }
