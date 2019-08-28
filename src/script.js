@@ -23,7 +23,7 @@ let Application = PIXI.Application,
         
         //load a JSON file and run the `setup` function when it's done
         loader
-        .add("./images/atlas/card_spritesheet2.json")
+        .add("./images/spritesheet/card_spritesheet.json")
         .add("./images/1.png").add("./images/2.png").add("./images/3.png")
         .add("./images/4.png").add("./images/5.png").add("./images/6.png")
         .add("./images/7.png").add("./images/8.png").add("./images/9.png")
@@ -37,22 +37,19 @@ let Application = PIXI.Application,
         
         let id, seed;
         function setup(){
-            id = resources["./images/atlas/card_spritesheet2.json"].textures;
+            id = resources["./images/spritesheet/card_spritesheet.json"].textures;
             createBoard();
-            //document.addEventListener('click', renderStage);
         }
 
-        //regex loop the below arr from fn() to shorten it
-        //^No, implmented in imgFileName
         let cardSelection = [
             "./images/1.png", "./images/2.png", "./images/3.png",
             "./images/4.png","./images/5.png","./images/6.png",
             "./images/7.png","./images/8.png","./images/9.png",
-            "./images/10.png"];
+            "./images/10.png"
+        ];
 
-        //selected cards below
         let cardsSelected = [];
-        //check selected cards
+
         function checkWin(arr){
             let firstCard = imgFileName(arr[0]);
             let secondCard = imgFileName(arr[1]);
@@ -61,22 +58,20 @@ let Application = PIXI.Application,
             } else {
                 return false;
             }
-            //return firstCard === secondCard ? true : false;
         }
         
         function duplicateArr(arr){
-            let duparr = [];
+            let doubledArr = [];
             for(let i = 0; i < arr.length; i++){
-                duparr.push(arr[i]);
-                duparr.push(arr[i]);
+                doubledArr.push(arr[i]);
+                doubledArr.push(arr[i]);
             }
-            return duparr;
+            return doubledArr;
         }
         
         function imgFileName(fileLocation){
             let regex = /(images\/\w+)/;
             let fileName = fileLocation[0].match(regex)[0].split('/')[1];
-            console.log(`Img name is ${fileName}`);
             return fileName;
         }
 
@@ -105,7 +100,6 @@ let Application = PIXI.Application,
         let mixedArray = mixArray(duplicateArr(cardSelection));
         console.log(mixArray(duplicateArr(cardSelection)));
 
-
     async function flipAnim(location){
         let i = 0;
         while (i < 9){
@@ -114,7 +108,6 @@ let Application = PIXI.Application,
             next.height = 140;
             let promise = new Promise(function(resolve, reject){
                     location.addChild(next);
-                    console.log(i);
                     setTimeout(function(){
                         location.removeChild(next);
                         resolve();
@@ -127,6 +120,45 @@ let Application = PIXI.Application,
     }
 
     let matchedCards = ['filler'];
+
+    function getDestination(){
+        let divisor = Math.floor(matchedCards.length / 12);
+        return [800 + divisor * 150, 20 + matchedCards.length * 50 - 492 * divisor];
+    }
+
+    async function moveToPile(back, j){
+        let lastTwoCards = j;
+        let allCards = back.parent.children;
+        let thePair = matchedCards[lastTwoCards];
+        let destination = getDestination();
+        while (allCards[thePair].x !== destination[0]
+            || allCards[thePair].y !== destination[1]){
+                let promise = new Promise(function(resolve, reject){
+                    setTimeout(function(){
+                        allCards[thePair].children[1].anchor.x = 0.6706;
+                        allCards[thePair].children[1].anchor.y = 0.6706;
+                        allCards[thePair].rotation += 0.05;
+                        if (allCards[thePair].x < destination[0]){
+                            allCards[thePair].x += 4;
+                            allCards[thePair].x > destination[0] ? 
+                                allCards[thePair].x = destination[0] : null;
+                        }
+                        if (allCards[thePair].y > destination[1]){
+                            allCards[thePair].y -= 4;
+                            allCards[thePair].y < destination[1] ? 
+                                allCards[thePair].y = destination[1] : null;
+                        }
+                        if (allCards[thePair].y < destination[1]){
+                            allCards[thePair].y += 4;
+                            allCards[thePair].y > destination[1] ? 
+                                allCards[thePair].y = destination[1] : null;
+                        } 
+                        resolve();
+                    }, 5);
+                });
+                await promise;
+            }
+    };
 
     function createBoard(){
         const slots = 20;
@@ -156,13 +188,14 @@ let Application = PIXI.Application,
                 back.x = i * 140 + 4;
             }
             back.interactive = true;
+            back.hitArea = new PIXI.Rectangle(28, 28, 85, 85);
             back.click = async function(){
                 if(cardsSelected.length >= 1){
                     back.parent.children.forEach(e => {
                         e.interactive = false;
                     });
                 }
-                cardsSelected.push([mixedArray[back.num], back.num]); //now we can get the container
+                cardsSelected.push([mixedArray[back.num], back.num]);
                 back.interactive = false;
                 back.children[0].visible = false;
                 let won = flipAnim(back);
@@ -187,50 +220,22 @@ let Application = PIXI.Application,
                             if (back.parent.children[matchedCards[j]]){
                                 back.parent.children[matchedCards[j]].interactive = false;
                             }
-                            //extract
-                            for (let b = 1; b < 3; b++){
-                                let j = matchedCards.length - b;
-                                async function moveToPile(){
-                                    function getDestination(){
-                                        let divisor = Math.floor(matchedCards.length / 12);
-                                        return [750 + divisor * 100, 20 + matchedCards.length * 44 - 500 * divisor];
-                                    }
-                                    let destination = getDestination();
-                                    console.log(destination)
-                                    //let i = 0;
-                                    while (back.parent.children[matchedCards[j]].x !== destination[0]
-                                        || back.parent.children[matchedCards[j]].y !== destination[1]){
-                                        let promise = new Promise(function(resolve, reject){
-                                            setTimeout(function(){
-                                                if (back.parent.children[matchedCards[j]].x < destination[0]){
-                                                    back.parent.children[matchedCards[j]].x += 1;
-                                                }
-                                                if (back.parent.children[matchedCards[j]].y > destination[1]){
-                                                    back.parent.children[matchedCards[j]].y -= 1;
-                                                }
-                                                if (back.parent.children[matchedCards[j]].y < destination[1]){
-                                                    back.parent.children[matchedCards[j]].y += 1;
-                                                } 
-                                                resolve();
-                                            }, 20);
-                                            
-                                        });
-                                        await promise;
-                                        //i++;
-                                    }
-                                };
-                                moveToPile();
-                                //extract above
-
-                            }
+                        }
+                        for (let b = 1; b < 3; b++){
+                            let j = matchedCards.length - b;
+                            moveToPile(back, j);
                         }
                         cardsSelected = [];
                     } else {
                         setTimeout(function(){
-                            back.parent.children[cardsSelected[0][1]].children[1].visible = false;
-                            back.parent.children[cardsSelected[1][1]].children[1].visible = false;
-                            back.parent.children[cardsSelected[0][1]].children[0].visible = true;
-                            back.parent.children[cardsSelected[1][1]].children[0].visible = true;
+                            let firstSelectedFront = back.parent.children[cardsSelected[0][1]].children[1];
+                            let secondSelectedFront = back.parent.children[cardsSelected[1][1]].children[1];
+                            let firstSelectedBack = back.parent.children[cardsSelected[0][1]].children[0];
+                            let secondSelectedBack = back.parent.children[cardsSelected[1][1]].children[0];
+                            firstSelectedFront.visible = false;
+                            secondSelectedFront.visible = false;
+                            firstSelectedBack.visible = true;
+                            secondSelectedBack.visible = true;
                             back.parent.children.forEach(e => {
                                 e.interactive = true;
                             })
