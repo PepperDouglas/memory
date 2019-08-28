@@ -1,0 +1,92 @@
+{"frames": [
+
+{
+	"filename": "back_00000.png",
+	"frame": {"x":254,"y":5,"w":152,"h":152},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":49,"y":49,"w":152,"h":152},
+	"sourceSize": {"w":250,"h":250}
+},
+{
+	"filename": "back_00001.png",
+	"frame": {"x":254,"y":163,"w":151,"h":158},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":52,"y":46,"w":151,"h":158},
+	"sourceSize": {"w":250,"h":250}
+},
+{
+	"filename": "back_00002.png",
+	"frame": {"x":316,"y":327,"w":145,"h":166},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":58,"y":42,"w":145,"h":166},
+	"sourceSize": {"w":250,"h":250}
+},
+{
+	"filename": "back_00003.png",
+	"frame": {"x":176,"y":327,"w":134,"h":172},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":65,"y":39,"w":134,"h":172},
+	"sourceSize": {"w":250,"h":250}
+},
+{
+	"filename": "back_00004.png",
+	"frame": {"x":128,"y":5,"w":120,"h":178},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":73,"y":36,"w":120,"h":178},
+	"sourceSize": {"w":250,"h":250}
+},
+{
+	"filename": "back_00005.png",
+	"frame": {"x":68,"y":199,"w":102,"h":182},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":82,"y":34,"w":102,"h":182},
+	"sourceSize": {"w":250,"h":250}
+},
+{
+	"filename": "back_00006.png",
+	"frame": {"x":41,"y":5,"w":81,"h":188},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":92,"y":31,"w":81,"h":188},
+	"sourceSize": {"w":250,"h":250}
+},
+{
+	"filename": "back_00007.png",
+	"frame": {"x":5,"y":205,"w":57,"h":192},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":102,"y":29,"w":57,"h":192},
+	"sourceSize": {"w":250,"h":250}
+},
+{
+	"filename": "back_00008.png",
+	"frame": {"x":5,"y":5,"w":30,"h":194},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":113,"y":28,"w":30,"h":194},
+	"sourceSize": {"w":250,"h":250}
+},
+{
+	"filename": "back_00009.png",
+	"frame": {"x":5,"y":403,"w":3,"h":3},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":3,"h":3},
+	"sourceSize": {"w":250,"h":250}
+}],
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "card_spritesheet.png",
+	"format": "RGBA8888",
+	"size": {"w":512,"h":512},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:54486c573ea7ab136faf26df50ffc8e2:94f941efdce00ab6aaea63b19d9193fe:32f2849a302f08d41e1eaf2382f4784a$"
+}
+}
