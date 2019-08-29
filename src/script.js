@@ -47,21 +47,24 @@ let cardSelection = [
 let cardsSelected = [];
 
 function checkWin(arr){
-    let firstCard = imgFileName(arr[0]);
-    let secondCard = imgFileName(arr[1]);
+    const firstCard = imgFileName(arr[0]);
+    const secondCard = imgFileName(arr[1]);
+
     if (firstCard === secondCard){
         return true;
-    } else {
-        return false;
-    }
+    } 
+    
+    return false;
 }
 
 function duplicateArr(arr){
-    let doubledArr = [];
+    const doubledArr = [];
+
     for(let i = 0; i < arr.length; i++){
         doubledArr.push(arr[i]);
         doubledArr.push(arr[i]);
     }
+
     return doubledArr;
 }
         
@@ -126,27 +129,28 @@ async function moveToPile(back, j){
     let allCards = back.parent.children;
     let thePair = matchedCards[lastTwoCards];
     let destination = getDestination();
-    while (allCards[thePair].x !== destination[0]
-        || allCards[thePair].y !== destination[1]){
+    const flyingCard = allCards[thePair];
+    const [x, y] = destination;
+
+    while (flyingCard.x !== x
+        || flyingCard.y !== y){
             let promise = new Promise(function(resolve, reject){
                 setTimeout(function(){
-                    allCards[thePair].children[1].anchor.x = 0.6706;
-                    allCards[thePair].children[1].anchor.y = 0.6706;
-                    allCards[thePair].rotation += 0.05;
-                    if (allCards[thePair].x < destination[0]){
-                        allCards[thePair].x += 4;
-                        allCards[thePair].x > destination[0] ? 
-                            allCards[thePair].x = destination[0] : null;
+                    flyingCard.children[1].anchor.x = 0.6706;
+                    flyingCard.children[1].anchor.y = 0.6706;
+                    flyingCard.rotation += 0.05;
+                    if (flyingCard.x < x){
+                        flyingCard.x = Math.min(flyingCard.x + 4, x)
                     }
-                    if (allCards[thePair].y > destination[1]){
-                        allCards[thePair].y -= 4;
-                        allCards[thePair].y < destination[1] ? 
-                            allCards[thePair].y = destination[1] : null;
+                    if (flyingCard.y > y){
+                        flyingCard.y -= 4;
+                        flyingCard.y < y ? 
+                            flyingCard.y = y : null;
                     }
-                    if (allCards[thePair].y < destination[1]){
-                        allCards[thePair].y += 4;
-                        allCards[thePair].y > destination[1] ? 
-                            allCards[thePair].y = destination[1] : null;
+                    if (flyingCard.y < y){
+                        flyingCard.y += 4;
+                        flyingCard.y > y ? 
+                            flyingCard.y = y : null;
                     } 
                     resolve();
                 }, 5);
@@ -155,36 +159,33 @@ async function moveToPile(back, j){
         }
 };
 
+function createCont(size) {
+    let cont = new Sprite(id[0]);
+    cont.height = size;
+    cont.width = size;
+    return cont;
+}
+
 function createBoard(){
     const slots = 20;
-    for (let i = 0; i < slots; i++){
-        let back = new Container;
-        let cont = new Sprite(id[0]);
-        cont.height = 140;
-        cont.width = 140;
+    const numberOfItemsInRow = 5;
+    const spaceBetweenTwo = 5;
+    const size = 140;
+
+    for (let i = 0; i < slots; i++) {
+        let back = new Container();
+
+        let cont = back.addChild(createCont(size));
         back.num = i;
-        if (i > 4 && i < 10){
-            back.y = 140;
-            i -= 5;
-            back.x = i * 140 + 4;
-            i += 5;
-        } else if (i > 9 && i < 15){
-            back.y = 240;
-            i -= 10;
-            back.x = i * 140 + 4;
-            i += 10;
-        } else if (i > 14){
-            back.y = 340;
-            i -= 15;
-            back.x = i * 140 + 4;
-            i += 15;
-        } else { 
-            back.y = 40;
-            back.x = i * 140 + 4;
-        }
+        
+        const xOffset = (i % numberOfItemsInRow);
+        const yOffset = Math.floor(i / numberOfItemsInRow);
+
+        back.position.set(xOffset * (size +  spaceBetweenTwo), yOffset * (size +  spaceBetweenTwo));
+
         back.interactive = true;
         back.hitArea = new PIXI.Rectangle(28, 28, 85, 85);
-        back.click = async function(){
+        back.click = async () => {
             if(cardsSelected.length >= 1){
                 back.parent.children.forEach(e => {
                     e.interactive = false;
@@ -193,8 +194,7 @@ function createBoard(){
             cardsSelected.push([mixedArray[back.num], back.num]);
             back.interactive = false;
             back.children[0].visible = false;
-            let won = flipAnim(back);
-            await won;
+            await flipAnim(back);
             if(back.children.length < 2){
                 let cardSymbol = new Sprite(resources[mixedArray[back.num]].texture);
                 cardSymbol.width = 85;
@@ -207,6 +207,7 @@ function createBoard(){
             }
             if (cardsSelected.length === 2){
                 if(checkWin(cardsSelected)){
+                    const [firstCard, secondCard, ...rest] = cardsSelected;
                     matchedCards.push(cardsSelected[0][1], cardsSelected[1][1]);
                     back.parent.children.forEach(e => {
                         e.interactive = true;
@@ -223,6 +224,7 @@ function createBoard(){
                     cardsSelected = [];
                 } else {
                     setTimeout(function(){
+                        const firstCard = cardsSelected[5];
                         let firstSelectedFront = back.parent.children[cardsSelected[0][1]].children[1];
                         let secondSelectedFront = back.parent.children[cardsSelected[1][1]].children[1];
                         let firstSelectedBack = back.parent.children[cardsSelected[0][1]].children[0];
@@ -243,8 +245,121 @@ function createBoard(){
                     }, 500);
                 }
             }
+            console.log(cardsSelected);
         }
-        back.addChild(cont);
         app.stage.addChild(back);
     }
+
+    // for (let i = 0; i < slots; i++){
+    //     let back = new Container();
+    //     let cont = new Sprite(id[0]);
+    //     cont.height = 140;
+    //     cont.width = 140;
+    //     back.num = i;
+
+
+    //     if(i < 5){
+    //         back.y = 40;
+    //         back.x = i * 140 + 4;
+    //     } else if (i < 10) {
+    //         back.y = 140;
+    //         i -= 5;
+    //         back.x = i * 140 + 4;
+    //         i += 5;
+    //     } else if (i < 15) {
+    //         back.y = 240;
+    //         i -= 10;
+    //         back.x = i * 140 + 4;
+    //         i += 10;
+    //     } else {
+    //         back.y = 340;
+    //         i -= 15;
+    //         back.x = i * 140 + 4;
+    //         i += 15;
+    //     }
+
+    //     if (i > 4 && i < 10){
+    //         back.y = 140;
+    //         i -= 5;
+    //         back.x = i * 140 + 4;
+    //         i += 5;
+    //     } else if (i > 9 && i < 15){
+    //         back.y = 240;
+    //         i -= 10;
+    //         back.x = i * 140 + 4;
+    //         i += 10;
+    //     } else if (i > 14){
+    //         back.y = 340;
+    //         i -= 15;
+    //         back.x = i * 140 + 4;
+    //         i += 15;
+    //     } else { 
+    //         back.y = 40;
+    //         back.x = i * 140 + 4;
+    //     }
+    //     back.interactive = true;
+    //     back.hitArea = new PIXI.Rectangle(28, 28, 85, 85);
+    //     back.click = async function(){
+    //         if(cardsSelected.length >= 1){
+    //             back.parent.children.forEach(e => {
+    //                 e.interactive = false;
+    //             });
+    //         }
+    //         cardsSelected.push([mixedArray[back.num], back.num]);
+    //         back.interactive = false;
+    //         back.children[0].visible = false;
+    //         let won = flipAnim(back);
+    //         await won;
+    //         if(back.children.length < 2){
+    //             let cardSymbol = new Sprite(resources[mixedArray[back.num]].texture);
+    //             cardSymbol.width = 85;
+    //             cardSymbol.height = 85;
+    //             cardSymbol.x += 28;
+    //             cardSymbol.y += 28;
+    //             back.addChild(cardSymbol);
+    //         } else {
+    //             back.children[1].visible = true;
+    //         }
+    //         if (cardsSelected.length === 2){
+    //             if(checkWin(cardsSelected)){
+    //                 matchedCards.push(cardsSelected[0][1], cardsSelected[1][1]);
+    //                 back.parent.children.forEach(e => {
+    //                     e.interactive = true;
+    //                 })
+    //                 for (let j = 0; j < matchedCards.length; j++){
+    //                     if (back.parent.children[matchedCards[j]]){
+    //                         back.parent.children[matchedCards[j]].interactive = false;
+    //                     }
+    //                 }
+    //                 for (let b = 1; b < 3; b++){
+    //                     let j = matchedCards.length - b;
+    //                     moveToPile(back, j);
+    //                 }
+    //                 cardsSelected = [];
+    //             } else {
+    //                 setTimeout(function(){
+    //                     let firstSelectedFront = back.parent.children[cardsSelected[0][1]].children[1];
+    //                     let secondSelectedFront = back.parent.children[cardsSelected[1][1]].children[1];
+    //                     let firstSelectedBack = back.parent.children[cardsSelected[0][1]].children[0];
+    //                     let secondSelectedBack = back.parent.children[cardsSelected[1][1]].children[0];
+    //                     firstSelectedFront.visible = false;
+    //                     secondSelectedFront.visible = false;
+    //                     firstSelectedBack.visible = true;
+    //                     secondSelectedBack.visible = true;
+    //                     back.parent.children.forEach(e => {
+    //                         e.interactive = true;
+    //                     })
+    //                     for (let j = 0; j < matchedCards.length; j++){
+    //                         if (back.parent.children[matchedCards[j]]){
+    //                             back.parent.children[matchedCards[j]].interactive = false;
+    //                         }
+    //                     }
+    //                     cardsSelected = [];
+    //                 }, 500);
+    //             }
+    //         }
+    //     }
+    //     back.addChild(cont);
+    //     app.stage.addChild(back);
+    // }
 }
